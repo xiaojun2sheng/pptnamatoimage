@@ -206,6 +206,21 @@ const generateImage = async () => {
       }
     })
 
+    // 特别处理字体大小
+    const processFontSize = (el) => {
+      const computedStyle = window.getComputedStyle(el)
+      const fontSize = computedStyle.fontSize
+      if (fontSize && fontSize !== '0px') {
+        el.style.fontSize = fontSize
+      }
+      
+      // 递归处理子元素
+      Array.from(el.children).forEach(processFontSize)
+    }
+
+    // 处理临时容器中的所有元素的字体大小
+    processFontSize(tempContainer)
+
     // 确保所有图片加载完成
     const images = tempContainer.getElementsByTagName('img')
     await Promise.all(
@@ -239,21 +254,8 @@ const generateImage = async () => {
           clonedElement.style.padding = '0'
           clonedElement.style.boxSizing = 'border-box'
 
-          // 处理所有子元素
-          const elements = clonedElement.getElementsByTagName('*')
-          Array.from(elements).forEach(el => {
-            const originalStyles = window.getComputedStyle(el)
-            // 保留原始样式
-            el.style.cssText = Array.from(originalStyles)
-              .map(key => `${key}: ${originalStyles.getPropertyValue(key)}`)
-              .join('; ')
-
-            // 特别处理图片
-            if (el.tagName === 'IMG') {
-              el.style.maxWidth = '100%'
-              el.style.height = 'auto'
-            }
-          })
+          // 处理所有子元素的字体大小
+          processFontSize(clonedElement)
         }
       }
     }
