@@ -149,7 +149,7 @@ onMounted(() => {
   // 创建编辑器实例
   editorRef.value = createEditor({
     selector: '.editor',
-    html: '<p>请输入内容...</p>',
+    html: '',
     config: editorConfig,
   })
 
@@ -197,6 +197,34 @@ const generateImage = async () => {
     tempContainer.style.background = '#ffffff'
     tempContainer.style.padding = '40px'
     tempContainer.style.boxSizing = 'border-box'
+
+    // 添加基础样式到临时容器
+    const styleSheet = document.createElement('style')
+    styleSheet.textContent = `
+      ul {
+        list-style-type: disc !important;
+        padding-left: 2em !important;
+        margin: 1em 0 !important;
+      }
+      ol {
+        list-style-type: decimal !important;
+        padding-left: 2em !important;
+        margin: 1em 0 !important;
+      }
+      li {
+        display: list-item !important;
+        margin: 0.5em 0 !important;
+      }
+      li::marker {
+        unicode-bidi: isolate !important;
+        font-variant-numeric: tabular-nums !important;
+        text-transform: none !important;
+        text-indent: 0px !important;
+        text-align: start !important;
+        text-align-last: start !important;
+      }
+    `
+    tempContainer.appendChild(styleSheet)
 
     // 复制所有样式
     const styles = window.getComputedStyle(element)
@@ -371,6 +399,24 @@ const generateImage = async () => {
 
 :deep(.content-wrapper) {
   min-height: 100%;
+}
+
+/* 添加列表样式 */
+:deep(.preview-content ul) {
+  list-style-type: disc;
+  padding-left: 2em;
+  margin: 1em 0;
+}
+
+:deep(.preview-content ol) {
+  list-style-type: decimal;
+  padding-left: 2em;
+  margin: 1em 0;
+}
+
+:deep(.preview-content li) {
+  display: list-item;
+  margin: 0.5em 0;
 }
 
 /* 自定义滚动条样式 */
